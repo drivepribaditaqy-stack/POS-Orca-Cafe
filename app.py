@@ -162,13 +162,15 @@ def run_main_app():
     # PERUBAHAN: Injeksi CSS untuk tema Cafe Orca (nuansa biru laut)
     custom_css = """
     <style>
+    /* REVISI: Menggunakan palet warna "Ocean Blue Serenity" */
     :root {
         --primary-color: #0077B6; 
         --secondary-color: #00B4D8; 
-        --background-color: #F0F8FF;
-        --text-color: #023047; 
-        --widget-background: #E1F5FE;
+        --background-color: #03045E; /* Biru paling gelap untuk background */
+        --text-color: #CAF0F8; /* Biru paling terang untuk teks */
+        --widget-background: #023E8A; /* Biru tua untuk widget */
         --danger-color: #D32F2F;
+        --text-color-dark: #03045E; /* Teks gelap untuk kontras di widget terang */
     }
     body { color: var(--text-color); background-color: var(--background-color); }
     .st-emotion-cache-16txtl3 { background-color: var(--background-color); } /* Sidebar background */
@@ -176,11 +178,11 @@ def run_main_app():
     
     /* Tombol Utama */
     .stButton>button {
-        background-color: var(--primary-color); color: white; border: 2px solid var(--primary-color);
+        background-color: var(--secondary-color); color: var(--text-color-dark); border: 2px solid var(--secondary-color);
         font-weight: bold; border-radius: 8px;
     }
     .stButton>button:hover {
-        background-color: var(--secondary-color); color: var(--text-color); border: 2px solid var(--secondary-color);
+        background-color: #48CAE4; color: var(--text-color-dark); border: 2px solid #48CAE4;
     }
     .stButton>button[kind="primary"] { background-color: var(--danger-color); color: white; border: none; }
     .stButton>button[kind="primary"]:hover { background-color: #E57373; }
@@ -193,15 +195,19 @@ def run_main_app():
         border-radius: 5px;
     }
     
-    /* Mengganti warna teks placeholder */
-    ::placeholder {
+    /* Teks label di atas widget */
+    .st-emotion-cache-1qg05j4 {
         color: var(--text-color) !important;
-        opacity: 0.7;
+    }
+    
+    /* Panah dropdown */
+    .st-emotion-cache-19rxjzo svg {
+        fill: var(--text-color) !important;
     }
 
     /* Header & Title */
-    h1, h2, h3 { color: var(--primary-color); }
-    .st-emotion-cache-1g8m5r4 { color: var(--text-color); }
+    h1, h2, h3 { color: var(--secondary-color); }
+    .st-emotion-cache-1g8m5r4 { color: var(--text-color); } /* Metric label */
     </style>
     """
     st.markdown(custom_css, unsafe_allow_html=True)
