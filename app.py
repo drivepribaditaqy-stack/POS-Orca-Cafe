@@ -167,7 +167,7 @@ def run_main_app():
         --primary-color: #0077B6; 
         --secondary-color: #00B4D8; 
         --background-color: #03045E; /* Biru paling gelap untuk background */
-        --text-color: #CAF0F8; /* Biru paling terang untuk teks */
+        --text-color: #00B4D8; /* REVISI: Warna font utama diubah */
         --widget-background: #023E8A; /* Biru tua untuk widget */
         --danger-color: #D32F2F;
         --text-color-dark: #03045E; /* Teks gelap untuk kontras di widget terang */
