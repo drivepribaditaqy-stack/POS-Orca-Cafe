@@ -163,8 +163,12 @@ def run_main_app():
     custom_css = """
     <style>
     :root {
-        --primary-color: #0077B6; --secondary-color: #00B4D8; --background-color: #F0F8FF;
-        --text-color: #023047; --widget-background: #FFFFFF; --danger-color: #D32F2F;
+        --primary-color: #0077B6; 
+        --secondary-color: #00B4D8; 
+        --background-color: #F0F8FF;
+        --text-color: #023047; 
+        --widget-background: #E1F5FE; /* REVISI: Warna latar widget diubah */
+        --danger-color: #D32F2F;
     }
     body { color: var(--text-color); background-color: var(--background-color); }
     .st-emotion-cache-16txtl3 { background-color: var(--widget-background); }
@@ -179,7 +183,9 @@ def run_main_app():
     .stButton>button[kind="primary"] { background-color: var(--danger-color); color: white; border: none; }
     .stButton>button[kind="primary"]:hover { background-color: #E57373; }
     .stTextInput>div>div>input, .stNumberInput>div>div>input, .stSelectbox>div>div {
-        background-color: var(--widget-background); border-radius: 5px;
+        background-color: var(--widget-background); 
+        color: var(--text-color); /* REVISI: Warna teks di dalam input diubah */
+        border-radius: 5px;
     }
     h1, h2, h3 { color: var(--primary-color); }
     .st-emotion-cache-1g8m5r4 { color: var(--text-color); }
