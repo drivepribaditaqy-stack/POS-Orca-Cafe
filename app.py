@@ -158,7 +158,17 @@ def check_login():
             "Temukan ketenangan dalam secangkir kopi.",
             "Kopi adalah caraku mengatakan 'mari kita mulai petualangan hari ini'.",
             "Setiap cangkir adalah kanvas, dan barista adalah senimannya.",
-            "Selamat menikmati kopi pilihan terbaik."
+            "Selamat menikmati kopi pilihan terbaik.",
+            "Hari ini adalah kesempatan baru. Mulai dengan kopi terbaikmu!",
+            "Kopi bukan hanya minuman, tapi ritual untuk memulai hari.",
+            "Semangat kerjamu sehangat kopi di pagi hari.",
+            "Biarkan aroma kopi mengisi harimu dengan inspirasi.",
+            "Keberhasilan dimulai dengan secangkir kopi dan pikiran yang jernih.",
+            "Ciptakan momen indahmu, ditemani kopi dari Orca Café.",
+            "Setiap tetes kopi adalah energi untuk meraih mimpi.",
+            "Nikmati prosesnya, seperti menikmati setiap tegukan kopi.",
+            "Kopi hari ini, semangat untuk esok hari.",
+            "Jadikan setiap harimu berarti, seperti rasa kopi yang mendalam."
         ]
         st.markdown(f"> *{random.choice(quotes)}*")
         st.markdown("---")
@@ -214,7 +224,23 @@ def run_main_app():
         cols = df.columns
         # Simple heuristic for column widths
         effective_page_width = pdf.w - 2 * pdf.l_margin
-        col_widths = [effective_page_width / len(cols)] * len(cols)
+        # Adjusted column widths for better display in PDF
+        col_widths = []
+        for col in cols:
+            if 'ID' in col or 'Qty' in col or 'Unit' in col:
+                col_widths.append(effective_page_width * 0.1) # Smaller width for ID/Qty
+            elif 'Tanggal' in col or 'Waktu' in col or 'Date' in col:
+                col_widths.append(effective_page_width * 0.18) # Medium width for dates/times
+            elif 'Deskripsi' in col or 'Nama' in col or 'Produk' in col or 'Bahan':
+                col_widths.append(effective_page_width * 0.25) # Larger width for names/descriptions
+            else:
+                col_widths.append(effective_page_width * 0.15) # Default width
+
+        # Normalize widths if they exceed total page width
+        total_widths = sum(col_widths)
+        if total_widths > effective_page_width:
+            col_widths = [w * (effective_page_width / total_widths) for w in col_widths]
+
 
         for i, col in enumerate(cols):
             pdf.cell(col_widths[i], 10, str(col), 1, 0, 'C')
@@ -224,7 +250,8 @@ def run_main_app():
         pdf.set_font("Arial", '', 8)
         for _, row in df.iterrows():
             for i, item in enumerate(row):
-                 pdf.cell(col_widths[i], 10, str(item), 1, 0)
+                # Ensure all items are strings for pdf.cell
+                pdf.cell(col_widths[i], 10, str(item), 1, 0)
             pdf.ln()
         return bytes(pdf.output())
 
@@ -263,6 +290,10 @@ def run_main_app():
             </style>
         """
         st.markdown(dark_theme_css, unsafe_allow_html=True)
+    else:
+        # Light theme CSS (add if needed, otherwise Streamlit default light theme applies)
+        pass
+
 
     # --- Fungsi Logika Bisnis ---
     def process_atomic_sale(cart, payment_method, employee_id, cash_received=0):
@@ -602,13 +633,43 @@ def run_main_app():
             saran = []
             if total_pendapatan > 0:
                 if laba_bersih < 0: saran.append("Profit sedang negatif. Waktunya evaluasi HPP produk atau tekan biaya operasional. Pertimbangkan sedikit penyesuaian harga pada produk best-seller.")
-                if not laris_df.empty and not profit_summary.empty and laris_df['Produk Paling Laris'].iloc[0] != profit_summary['Produk Paling Menguntungkan'].iloc[0]:
-                    saran.append(f"Produk '{laris_df['Produk Paling Laris'].iloc[0]}' paling laku, tapi '{profit_summary['Produk Paling Menguntungkan'].iloc[0]}' paling untung. Coba tawarkan (upselling) produk yang lebih menguntungkan kepada pelanggan.")
-            if not laris_df.empty: saran.append(f"Produk '{laris_df['Produk Paling Laris'].iloc[0]}' sedang populer! Pastikan stok bahan bakunya aman dan promosikan lebih gencar di media sosial.")
-            if total_biaya_operasional > total_pendapatan * 0.3: saran.append("Biaya operasional terlihat cukup tinggi. Coba negosiasi ulang dengan supplier atau cek kembali pos pengeluaran seperti listrik dan air.")
-            saran.extend(["Luangkan waktu rutin untuk menganalisa laporan ini agar dapat mengambil keputusan berbasis data.", "Gunakan media sosial untuk mempromosikan produk yang sedang laris atau produk dengan margin keuntungan tertinggi.", "Dengarkan masukan pelanggan. Kotak saran atau polling di Instagram bisa memberikan ide-ide segar untuk inovasi produk."])
+                else: saran.append(f"Profitabilitas bisnis sehat! Pertimbangkan untuk berinvestasi pada peningkatan kualitas bahan baku atau program loyalitas pelanggan untuk pertumbuhan lebih lanjut.")
+                if not laris_df.empty and not profit_summary.empty:
+                    if laris_df['Produk Paling Laris'].iloc[0] != profit_summary['Produk Paling Menguntungkan'].iloc[0]:
+                        saran.append(f"Produk '{laris_df['Produk Paling Laris'].iloc[0]}' paling laku, tapi '{profit_summary['Produk Paling Menguntungkan'].iloc[0]}' paling untung. Coba tawarkan (upselling) produk yang lebih menguntungkan kepada pelanggan.")
+                    else:
+                        saran.append(f"Produk terlaris dan paling menguntungkan adalah '{laris_df['Produk Paling Laris'].iloc[0]}'. Fokuskan upaya pemasaran pada produk ini dan pastikan ketersediaan stok selalu terjaga.")
+
+            if not laris_df.empty:
+                saran.append(f"Produk '{laris_df['Produk Paling Laris'].iloc[0]}' sedang populer! Pastikan stok bahan bakunya aman dan promosikan lebih gencar di media sosial. Bisa juga membuat paket bundling dengan produk pelengkap.")
+            else:
+                saran.append("Belum ada produk yang menonjol. Lakukan analisis pasar atau tawarkan diskon untuk beberapa produk baru untuk melihat respons pelanggan.")
+
+            if total_biaya_operasional > total_pendapatan * 0.3:
+                saran.append("Biaya operasional terlihat cukup tinggi. Coba negosiasi ulang dengan supplier atau cek kembali pos pengeluaran seperti listrik dan air. Apakah ada langganan yang tidak terpakai?")
+            else:
+                saran.append("Biaya operasional terkontrol dengan baik. Tetap pantau dan cari peluang efisiensi tambahan tanpa mengurangi kualitas.")
+
+            if total_pengeluaran_lainnya > total_pendapatan * 0.1:
+                saran.append("Pengeluaran lain-lain cukup signifikan. Coba identifikasi dan kategorikan pengeluaran ini lebih detail untuk menemukan area penghematan.")
+            else:
+                saran.append("Pengeluaran lainnya masih dalam batas wajar. Pertahankan kontrol pengeluaran yang ketat ini.")
+
+            saran.extend([
+                "Luangkan waktu rutin untuk menganalisa laporan ini agar dapat mengambil keputusan berbasis data yang lebih akurat dan tepat waktu.",
+                "Gunakan media sosial untuk mempromosikan produk yang sedang laris atau produk dengan margin keuntungan tertinggi. Buat konten yang menarik dan interaktif.",
+                "Dengarkan masukan pelanggan. Kotak saran atau polling di Instagram bisa memberikan ide-ide segar untuk inovasi produk atau peningkatan layanan.",
+                "Lakukan training berkala untuk karyawan agar mereka lebih terampil dalam melayani pelanggan dan mengelola operasional.",
+                "Pertimbangkan untuk memperluas jangkauan pasar dengan bekerja sama dengan platform pesan antar atau mengadakan event kecil di kafe.",
+                "Jaga kualitas produk dan pelayanan. Pelanggan yang puas adalah promosi terbaik.",
+                "Periksa kembali resep produk dan harga bahan baku secara berkala. Fluktuasi harga dapat mempengaruhi HPP dan profitabilitas.",
+                "Manfaatkan data tren pendapatan untuk mengatur strategi promosi pada periode tertentu, misalnya diskon di hari-hari sepi pengunjung.",
+                "Bangun komunitas pelanggan setia. Program loyalitas atau kartu member bisa meningkatkan retensi pelanggan.",
+                "Selalu berinovasi dengan menu baru atau variasi dari menu yang sudah ada untuk menarik minat pelanggan."
+            ])
             random.shuffle(saran)
-            for i in range(min(3, len(saran))): st.info(saran[i])
+            for i in range(min(5, len(saran))): # Display more suggestions
+                st.info(saran[i])
 
             summary_text = f"Ringkasan Laporan Orca Café ({start_date.strftime('%d %b %Y')} - {end_date.strftime('%d %b %Y')})\n- Pendapatan: Rp {total_pendapatan:,.0f}\n- Modal (HPP): Rp {total_modal:,.0f}\n- Laba Bersih: Rp {laba_bersih:,.0f}"
             st.link_button("Kirim Ringkasan via WhatsApp", f"https://api.whatsapp.com/send?text={urllib.parse.quote(summary_text)}")
@@ -634,6 +695,7 @@ def run_main_app():
         
         st.markdown("---"); st.subheader("Kelola Transaksi")
         if not transactions_df.empty:
+            # Menggunakan ID Transaksi langsung dari DataFrame
             selected_id = st.selectbox("Pilih ID Transaksi dari tabel di atas untuk dikelola", options=transactions_df['ID Transaksi'].tolist())
             if selected_id:
                 col1, col2 = st.columns(2)
@@ -643,7 +705,7 @@ def run_main_app():
                 with col2:
                     if st.button("Hapus Transaksi Ini", type="primary", key=f"del_{selected_id}"):
                         success, message = delete_transaction(selected_id)
-                        if success: st.success(message)
+                        if success: st.success(message); del st.session_state['last_transaction_id']
                         else: st.error(message)
                         st.rerun()
         else: st.info("Tidak ada transaksi untuk dikelola.")
@@ -673,8 +735,13 @@ def run_main_app():
             st.subheader("Edit Pengeluaran")
             all_expenses = get_df("SELECT id, description FROM expenses")
             if not all_expenses.empty:
-                exp_to_edit = st.selectbox("Pilih pengeluaran untuk diedit", all_expenses['description'].tolist())
-                exp_data = run_query("SELECT * FROM expenses WHERE description = ?", (exp_to_edit,), fetch='one')
+                # Menggunakan ID sebagai value, menampilkan deskripsi
+                expense_options = {f"{row['description']} (ID: {row['id']})": row['id'] for _, row in all_expenses.iterrows()}
+                selected_expense_display = st.selectbox("Pilih pengeluaran untuk diedit", list(expense_options.keys()))
+                
+                exp_id_to_edit = expense_options[selected_expense_display]
+                exp_data = run_query("SELECT * FROM expenses WHERE id = ?", (exp_id_to_edit,), fetch='one')
+                
                 if exp_data:
                     with st.form("edit_expense_form"):
                         st.info(f"Mengedit data untuk: **{exp_data[3]}**")
@@ -798,7 +865,8 @@ def run_main_app():
             search_date_str = search_date.strftime('%Y-%m-%d')
             attendance_df = get_df("SELECT a.id, e.name, a.check_in FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE date(a.check_in) = ? ORDER BY a.check_in DESC", (search_date_str,))
             if not attendance_df.empty:
-                attendance_options = {f"ID: {row['id']} - {row['name']} ({row['check_in']})": row['id'] for _, row in attendance_df.iterrows()}
+                # Menggunakan nama dan check_in untuk display, ID sebagai value
+                attendance_options = {f"{row['name']} ({row['check_in']}) - ID: {row['id']}": row['id'] for _, row in attendance_df.iterrows()}
                 selected_att_str = st.selectbox("Pilih absensi untuk diedit", list(attendance_options.keys()))
                 if selected_att_str:
                     att_id = attendance_options[selected_att_str]
@@ -856,13 +924,15 @@ def run_main_app():
             st.subheader("Hapus Data Transaksional")
 
             with st.expander("Hapus Resep"):
-                products_df = get_df("SELECT p.id, p.name FROM products p JOIN recipes r ON p.id = r.product_id GROUP BY p.id")
-                if not products_df.empty:
-                    prod_to_clear_recipe = st.selectbox("Pilih produk untuk hapus resepnya", products_df['name'].tolist(), key="del_recipe_select")
-                    if st.button(f"Hapus Resep untuk '{prod_to_clear_recipe}'", type="primary"):
-                        prod_id = products_df[products_df['name'] == prod_to_clear_recipe]['id'].iloc[0]
+                products_with_recipes = get_df("SELECT DISTINCT p.id, p.name FROM products p JOIN recipes r ON p.id = r.product_id ORDER BY p.name")
+                if not products_with_recipes.empty:
+                    # Menggunakan nama produk untuk dropdown
+                    prod_name_to_clear_recipe = st.selectbox("Pilih produk untuk hapus resepnya", products_with_recipes['name'].tolist(), key="del_recipe_select")
+                    
+                    if st.button(f"Hapus Resep untuk '{prod_name_to_clear_recipe}'", type="primary"):
+                        prod_id = products_with_recipes[products_with_recipes['name'] == prod_name_to_clear_recipe]['id'].iloc[0]
                         run_query("DELETE FROM recipes WHERE product_id=?", (prod_id,))
-                        st.success(f"Resep untuk '{prod_to_clear_recipe}' telah dihapus."); st.rerun()
+                        st.success(f"Resep untuk '{prod_name_to_clear_recipe}' telah dihapus."); st.rerun()
                 else: st.info("Tidak ada produk yang memiliki resep untuk dihapus.")
 
             with st.expander("Hapus SEMUA Riwayat Transaksi"):
