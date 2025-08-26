@@ -167,12 +167,14 @@ def run_main_app():
         --secondary-color: #00B4D8; 
         --background-color: #F0F8FF;
         --text-color: #023047; 
-        --widget-background: #E1F5FE; /* REVISI: Warna latar widget diubah */
+        --widget-background: #E1F5FE;
         --danger-color: #D32F2F;
     }
     body { color: var(--text-color); background-color: var(--background-color); }
-    .st-emotion-cache-16txtl3 { background-color: var(--widget-background); }
-    .st-emotion-cache-1y4p8pa { background-color: var(--background-color); }
+    .st-emotion-cache-16txtl3 { background-color: var(--background-color); } /* Sidebar background */
+    .st-emotion-cache-1y4p8pa { background-color: var(--background-color); } /* Main content background */
+    
+    /* Tombol Utama */
     .stButton>button {
         background-color: var(--primary-color); color: white; border: 2px solid var(--primary-color);
         font-weight: bold; border-radius: 8px;
@@ -182,11 +184,22 @@ def run_main_app():
     }
     .stButton>button[kind="primary"] { background-color: var(--danger-color); color: white; border: none; }
     .stButton>button[kind="primary"]:hover { background-color: #E57373; }
-    .stTextInput>div>div>input, .stNumberInput>div>div>input, .stSelectbox>div>div {
-        background-color: var(--widget-background); 
-        color: var(--text-color); /* REVISI: Warna teks di dalam input diubah */
+    
+    /* Input & Widget Styling */
+    .stTextInput>div>div>input, .stNumberInput>div>div>input, .stSelectbox>div>div, .stDateInput>div>div>input {
+        background-color: var(--widget-background) !important; 
+        color: var(--text-color) !important;
+        border: 1px solid var(--secondary-color);
         border-radius: 5px;
     }
+    
+    /* Mengganti warna teks placeholder */
+    ::placeholder {
+        color: var(--text-color) !important;
+        opacity: 0.7;
+    }
+
+    /* Header & Title */
     h1, h2, h3 { color: var(--primary-color); }
     .st-emotion-cache-1g8m5r4 { color: var(--text-color); }
     </style>
@@ -195,7 +208,6 @@ def run_main_app():
 
     # --- Navigasi Sidebar ---
     st.sidebar.title("Menu Navigasi")
-    # REVISI: Mengikuti struktur menu dari file asli dan menambahkan menu Pengaturan
     if st.session_state.role == 'Admin':
         menu_options = ["Kasir (POS)", "Laporan", "Manajemen Produk", "Manajemen Stok", "Manajemen Karyawan", "Absensi", "Pengeluaran", "Pengaturan"]
     else: # Operator
