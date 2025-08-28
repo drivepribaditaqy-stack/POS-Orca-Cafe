@@ -73,6 +73,7 @@ def insert_initial_products(conn):
     if c.fetchone()[0] == 0:
         st.info("Daftar produk tidak ditemukan, menambahkan produk awal...")
         products = [
+            # Existing products
             ("Espresso", 10000), ("Americano", 11000), ("Orange Americano", 14000),
             ("Lemon Americano", 14000), ("Cocof (BN Signature)", 15000), ("Coffee Latte", 15000),
             ("Cappuccino", 15000), ("Spanish Latte", 16000), ("Caramel Latte", 16000),
@@ -103,7 +104,70 @@ def insert_initial_products(conn):
             ("Kentang Goreng", 12000), ("Nugget", 12000), ("Sosis", 12000),
             ("Mix Platter Jumbo", 35000), ("Tahu/Tempe", 5000),
             ("Double Shoot", 3000), ("Yakult", 3000), ("Mineral Water", 4000),
-            ("Mineral Water Gelas", 500), ("Nasi Putih", 3000), ("Le Mineralle", 4000)
+            ("Mineral Water Gelas", 500), ("Nasi Putih", 3000), ("Le Mineralle", 4000),
+            
+            # New products
+            # ☕ SIGNATURE
+            ("Kopi Aceh Panas", 7000),
+            ("Kopi Aceh Dingin", 8000),
+            ("Butterscotch Panas", 13000),
+            ("Butterscotch Dingin", 14000),
+            ("Kopi Aren Panas", 13000),
+            ("Kopi Aren Dingin", 14000),
+            
+            # ☕ COFFEE
+            ("Americano Panas", 9000),
+            ("Americano Dingin", 10000),
+            ("Espresso Panas", 8000),
+            ("Espresso Dingin", 9000),
+            ("Caramel Panas", 13000),
+            ("Caramel Dingin", 14000),
+            ("Cappucino Panas", 12000),
+            ("Cappucino Dingin", 13000),
+            ("Spanish Panas", 11000),
+            ("Spanish Dingin", 12000),
+            
+            # 🍹 MOCKTAIL
+            ("Blue Sky", 14000),
+            ("Mango Soda", 12000),
+            ("Orange Soda", 12000),
+            ("Strawberry Soda", 12000),
+            ("Green Apple", 14000),
+            ("Cotton Candy", 14000),
+            
+            # 🥤 NON COFFEE
+            ("Matcha Panas", 11000),
+            ("Matcha Dingin", 13000),
+            ("Coklat Panas", 11000),
+            ("Coklat Dingin", 13000),
+            ("Red Velvet Panas", 11000),
+            ("Red Velvet Dingin", 12000),
+            ("Strawberry Panas", 11000),
+            ("Strawberry Dingin", 12000),
+            ("Lemon Tea Panas", 9000),
+            ("Lemon Tea Dingin", 10000),
+            ("Orange Milk Panas", 12000),
+            ("Orange Milk Dingin", 14000),
+            ("Mango Milk Panas", 12000),
+            ("Mango Milk Dingin", 13000),
+            
+            # 🥡 SACHET
+            ("Cappucino Panas", 6000),
+            ("Cappucino Dingin", 7000),
+            ("Milo Panas", 6000),
+            ("Milo Dingin", 7000),
+            ("Beng-beng Panas", 6000),
+            ("Beng-beng Dingin", 7000),
+            ("Chocolatos Panas", 6000),
+            ("Chocolatos Dingin", 7000),
+            ("Teh Tarik Panas", 6000),
+            ("Teh Tarik Dingin", 7000),
+            ("Nutrisari Panas", 6000),
+            ("Nutrisari Dingin", 7000),
+            ("Kukubima Susu Panas", 6000),
+            ("Kukubima Susu Dingin", 7000),
+            ("Extra Joss Susu Panas", 6000),
+            ("Extra Joss Susu Dingin", 7000)
         ]
         c.executemany("INSERT INTO products (name, price) VALUES (?, ?)", products)
         conn.commit()
